@@ -66,7 +66,7 @@ pipeline {
                     //image 'amazon/aws-cli:2.15.53''
                     image 'my-aws-cli'
                     reuseNode true
-                    args "-u root --entrypoint=''"
+                    args " --entrypoint=''"
                 }
             }
             /*environment {
