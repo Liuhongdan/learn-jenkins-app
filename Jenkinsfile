@@ -85,6 +85,7 @@ pipeline {
                         aws --version
                         #yum install jq -y
                         #aws s3 sync build s3://$AWS_S3_BUCKET/
+                        sed -i "s/#APP_VERSION#/$REACT_APP_VERSION/g" AWS/task-definition-prod.json
                         LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://AWS/task-definition-prod.json | jq '.taskDefinition.revision')
                         echo $LATEST_TD_REVISION
                         aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE_PROD --task-definition $AWS_ECS_TD_PROD:$LATEST_TD_REVISION
