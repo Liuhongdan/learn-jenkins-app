@@ -44,15 +44,16 @@ pipeline {
             agent {
                 docker {
                     /*2.31.18*/
-                    image 'amazon/aws-cli:2.15.53'
+                    //image 'amazon/aws-cli:2.15.53'
+                    image: my-aws-cli 
                     reuseNode true
                     args "-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=''"
                 }
             }
             steps {
                 sh '''
-                    cat /etc/image-id
-                    amazon-linux-extras install docker
+                    #cat /etc/image-id
+                    #amazon-linux-extras install docker
                     docker build -t myjenkinsapp .
                 '''
             }
@@ -62,7 +63,8 @@ pipeline {
             agent {
                 docker {
                     /*2.31.18*/
-                    image 'amazon/aws-cli'
+                    #image 'amazon/aws-cli'
+                    image: my-aws-cli 
                     reuseNode true
                     args "-u root --entrypoint=''"
                 }
@@ -75,7 +77,7 @@ pipeline {
                     // some block
                     sh '''
                         aws --version
-                        yum install jq -y
+                        #yum install jq -y
                         #aws s3 sync build s3://$AWS_S3_BUCKET/
                         LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://AWS/task-definition-prod.json | jq '.taskDefinition.revision')
                         echo $LATEST_TD_REVISION
