@@ -53,13 +53,15 @@ pipeline {
                 }
             }
             steps {
-                sh '''
-                    #cat /etc/image-id
-                    #amazon-linux-extras install docker
-                    docker build -t $AWS_DOCKER_REGISTEY/$APP_NAME:$REACT_APP_VERSION .
-                    aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DOCKER_REGISTEY
-                    docker push $AWS_DOCKER_REGISTEY/$APP_NAME:$REACT_APP_VERSION
-                '''
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh '''
+                        #cat /etc/image-id
+                        #amazon-linux-extras install docker
+                        docker build -t $AWS_DOCKER_REGISTEY/$APP_NAME:$REACT_APP_VERSION .
+                        aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DOCKER_REGISTEY
+                        docker push $AWS_DOCKER_REGISTEY/$APP_NAME:$REACT_APP_VERSION
+                    '''
+                }
             }
         }
 
