@@ -102,7 +102,11 @@ pipeline {
 
         stage('Apprival') {
             steps {
-                input message: 'Ready to deploy?', ok: 'Yes, I am sure I want to deploy!'
+                timeout(time: 15, unit: 'SECONDS') {
+                    // some block
+                    input message: 'Ready to deploy?', ok: 'Yes, I am sure I want to deploy!'
+                }
+                
             }
         }
 
