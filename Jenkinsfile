@@ -5,7 +5,7 @@ pipeline {
         //NETLIFY_SITE_ID = '7d6dde62-ae7f-43e3-aff3-539061b6b105'
         //NETLIFY_AUTH_TOKEN = credentials('netlify-token')
         REACT_APP_VERSION = "1.0.$BUILD_ID"
-        AWS_DEFAULT_REGIN = 'ap-southeast-1'
+        AWS_DEFAULT_REGION = 'ap-southeast-1'
     }
 
     stages {
