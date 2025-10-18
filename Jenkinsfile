@@ -51,6 +51,7 @@ pipeline {
             }
             steps {
                 sh '''
+                    cat /etc/image-id
                     amazon-linux-extras install docker
                     docker build -t myjenkinsapp .
                 '''
