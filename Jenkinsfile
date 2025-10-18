@@ -2,19 +2,42 @@ pipeline {
     agent any
 
     environment {
-        NETLIFY_SITE_ID = '7d6dde62-ae7f-43e3-aff3-539061b6b105'
-        NETLIFY_AUTH_TOKEN = credentials('netlify-token')
+        //NETLIFY_SITE_ID = '7d6dde62-ae7f-43e3-aff3-539061b6b105'
+        //NETLIFY_AUTH_TOKEN = credentials('netlify-token')
         REACT_APP_VERSION = "1.0.$BUILD_ID"
+        AWS_DEFAULT_REGIN = 'ap-southeast-1'
     }
 
     stages {
-        
-
+        stage('Deploy to AWS') {
+            agent {
+                docker {
+                    /*2.31.18*/
+                    image 'amazon/aws-cli'
+                    reuseNode true
+                    args "--entrypoint=''"
+                }
+            }
+            /*environment {
+                //AWS_S3_BUCKET = 'learn-jenkins-20251018'
+            }*/
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    // some block
+                    sh '''
+                        aws --version
+                        #aws s3 sync build s3://$AWS_S3_BUCKET/
+                        aws ecs register-task-definition --cli-input-json file://task-definition-prod.json
+                    '''
+                }
+            }
+        }
+        /*
         stage('Docker') {
             steps {
                 sh 'docker build -t my-playwright .'
             }
-        }
+        }*/
         //
         stage('Build') {
             agent {
@@ -35,31 +58,9 @@ pipeline {
                 '''
             }
         }
-        
-        stage('AWS') {
-            agent {
-                docker {
-                    /*2.31.18*/
-                    image 'amazon/aws-cli'
-                    reuseNode true
-                    args "--entrypoint=''"
-                }
-            }
-            environment {
-                AWS_S3_BUCKET = 'learn-jenkins-20251018'
-            }
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    // some block
-                    sh '''
-                        aws --version
-                        aws s3 sync build s3://$AWS_S3_BUCKET/
-                    '''
-                }
-            }
-        }
 
-        stage ('Run Tests') {
+
+        /*stage ('Run Tests') {
             parallel {
                 stage('Unit tests') {
                     agent {
@@ -159,7 +160,7 @@ pipeline {
             }
         }
 
-        /*stage('Apprival') {
+        stage('Apprival') {
             steps {
                 timeout(time: 15, unit: 'SECONDS') {
                     // some block
@@ -167,7 +168,7 @@ pipeline {
                 }
                 
             }
-        }*/
+        }
 
         stage('Deploy prod') {
             agent {
@@ -213,5 +214,6 @@ pipeline {
                 }
             }
         }
+        */
     }
 }
