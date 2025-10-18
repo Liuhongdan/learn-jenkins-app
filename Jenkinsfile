@@ -15,7 +15,7 @@ pipeline {
                     /*2.31.18*/
                     image 'amazon/aws-cli'
                     reuseNode true
-                    args "--entrypoint=''"
+                    args "-u root --entrypoint=''"
                 }
             }
             /*environment {
@@ -26,9 +26,11 @@ pipeline {
                     // some block
                     sh '''
                         aws --version
+                        yum install jq -y
                         #aws s3 sync build s3://$AWS_S3_BUCKET/
-                        aws ecs register-task-definition --cli-input-json file://AWS/task-definition-prod.json
-                        aws ecs update-service --cluster LearnJenkinsApp-Cluster-Prod --service LearnJenkinsApp-Service-Prod --task-definition LearnJenkinsApp-TaskDefinition-Prod:2
+                        LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://AWS/task-definition-prod.json | jq '.taskDefinition.revision')
+                        echo $LATEST_TD_REVISION
+                        aws ecs update-service --cluster LearnJenkinsApp-Cluster-Prod --service LearnJenkinsApp-Service-Prod --task-definition LearnJenkinsApp-TaskDefinition-Prod:$LATEST_TD_REVISION
                     '''
                 }
             }
