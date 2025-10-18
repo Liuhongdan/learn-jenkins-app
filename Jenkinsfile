@@ -27,7 +27,7 @@ pipeline {
                     sh '''
                         aws --version
                         #aws s3 sync build s3://$AWS_S3_BUCKET/
-                        aws ecs register-task-definition --cli-input-json file://task-definition-prod.json
+                        aws ecs register-task-definition --cli-input-json file://AWS/task-definition-prod.json
                     '''
                 }
             }
