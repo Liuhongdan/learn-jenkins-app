@@ -44,7 +44,7 @@ pipeline {
             agent {
                 docker {
                     /*2.31.18*/
-                    image 'amazon/aws-cli'
+                    image 'amazon/aws-cli:2.15.53'
                     reuseNode true
                     args "-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=''"
                 }
