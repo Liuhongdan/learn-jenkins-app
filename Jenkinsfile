@@ -7,6 +7,7 @@ pipeline {
         REACT_APP_VERSION = "1.0.$BUILD_ID"
         APP_NAME = 'learnjenkinsapp'
         AWS_DEFAULT_REGION = 'ap-southeast-1'
+        AWS_DOCKER_REGISTEY = '690169312057.dkr.ecr.ap-southeast-1.amazonaws.com'
         AWS_ECS_CLUSTER = 'LearnJenkinsApp-Cluster-Prod'
         AWS_ECS_SERVICE_PROD = 'LearnJenkinsApp-Service-Prod'
         AWS_ECS_TD_PROD = 'LearnJenkinsApp-TaskDefinition-Prod'
@@ -55,7 +56,9 @@ pipeline {
                 sh '''
                     #cat /etc/image-id
                     #amazon-linux-extras install docker
-                    docker build -t $APP_NAME:$REACT_APP_VERSION .
+                    docker build -t $AWS_DOCKER_REGISTEY/$APP_NAME:$REACT_APP_VERSION .
+                    aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DOCKER_REGISTEY
+                    docker push $AWS_DOCKER_REGISTEY/$APP_NAME:$REACT_APP_VERSION
                 '''
             }
         }
